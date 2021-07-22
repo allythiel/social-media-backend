@@ -78,7 +78,35 @@ router.put('/:id', async (req, res) => {
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
-});  
+});   
+////////////////////////////////////////////////////////// POST new Post //////////////////////////////////////////
+router.post('/:id/post', async (req, res) => {
+    try {
+        const { error } = (req.body);  // validateUser
+        if (error)
+        return res.status(400).send(error);
+
+        const user = await User.findById(req.params.id)
+
+    const post = new Post({
+
+    post: req.body.post,
+    author: req.body.author,
+    likes: req.body.likes, 
+  
+    });
+
+    user.post.push(post)
+
+    await user.save();
+    return res.send(user);
+
+    } catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+});   
+
+
 /*
 //////////////////////////////////////////////////////////////////// PUT  Likes ////////////////////////////////////////
 router.put('/:id/likes', async (req, res) => {
