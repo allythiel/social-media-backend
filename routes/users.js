@@ -1,26 +1,27 @@
-const { User, FriendRequestIn, FriendRequestOut, validateReply} = require('../models/user');
+const { User, FriendRequestIn, FriendRequestOut, Post, validateUser, validatePos} = require('../models/user');
 const express = require('express');
 const router = express.Router();
 
 
 // All endpoints and route handlers go here
-////////////////////////////////////////////////////////// GET //////////////////////////////////////////
+////////////////////////////////////////////////////////// GET all users//////////////////////////////////////////
 router.get('/', async (req, res) => {
     try {
-    const comments = await Comment.find();
-    return res.send(comments);
+    const users = await User.find();
+    return res.send(users);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
-}});
+}}); 
+/*
 ////////////////////////////////////////////////////////// GET By ID //////////////////////////////////////////
 router.get('/:id', async (req, res) => {
-    //TODO: refactor to get ALL comments by videoId
+    //TODO: refactor to get ALL users by videoId
     try {
    
-    const comment = await Comment.findById(req.params.id);
-    if (!comment)
-    return res.status(400).send(`The comment with id "${req.params.id}" does not exist.`);
-    return res.send(comment);
+    const user = await User.findById(req.params.id);
+    if (!user)
+    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+    return res.send(user);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
@@ -32,7 +33,7 @@ router.get('/:id', async (req, res) => {
         if (error)
         return res.status(400).send(error);
    
-    const comment = new Comment({
+    const user = new User({
 
     text: req.body.text,
     likes: req.body.likes,
@@ -40,8 +41,8 @@ router.get('/:id', async (req, res) => {
     videoId: req.body.videoId,
     });
 
-    await comment.save();
-    return res.send(comment);
+    await user.save();
+    return res.send(user);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
@@ -53,7 +54,7 @@ router.post('/:id/replies', async (req, res) => {
         if (error)
         return res.status(400).send(error);
 
-    const comment = await Comment.findById(req.params.id)
+    const user = await user.findById(req.params.id)
    
     const reply = new Reply({
 
@@ -61,10 +62,10 @@ router.post('/:id/replies', async (req, res) => {
 
     });
 
-    comment.replies.push(reply)
+    user.replies.push(reply)
 
-    await comment.save();
-    return res.send(comment);
+    await user.save();
+    return res.send(user);
 
 
     } catch (ex) {
@@ -72,13 +73,13 @@ router.post('/:id/replies', async (req, res) => {
     }
 }); 
 
-//TODO: POST a reply to a comment
+//TODO: POST a reply to a user
 //////////////////////////////////////////////////////////////////// PUT ////////////////////////////////////////
 router.put('/:id', async (req, res) => {
     try {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error);
-    const comment = await Comment.findByIdAndUpdate(
+    const user = await user.findByIdAndUpdate(
     req.params.id,
     {
         text: req.body.text,
@@ -88,11 +89,11 @@ router.put('/:id', async (req, res) => {
     },
     { new: true }
     );
-    if (!comment)
-    return res.status(400).send(`The comment with id "${req.params.id}" d
+    if (!user)
+    return res.status(400).send(`The user with id "${req.params.id}" d
    oes not exist.`);
-    await comment.save();
-    return res.send(comment);
+    await user.save();
+    return res.send(user);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
@@ -101,15 +102,15 @@ router.put('/:id', async (req, res) => {
 router.put('/:id/likes', async (req, res) => {
     try {
 
-        const comment = await Comment.findById(req.params.id) 
+        const user = await user.findById(req.params.id) 
 
-    if (!comment)
-    return res.status(400).send(`The comment with id "${req.params.id}" does not exist.`);
+    if (!user)
+    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
 
-    comment.likes++
+    user.likes++
 
-    await comment.save();
-    return res.send(comment);
+    await user.save();
+    return res.send(user);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
@@ -117,15 +118,15 @@ router.put('/:id/likes', async (req, res) => {
 //////////////////////////////////////////////////////////////////// PUT Dislikes////////////////////////////////////////
 router.put('/:id/dislikes', async (req, res) => {
     try {
-        const comment = await Comment.findById(req.params.id)
+        const user = await user.findById(req.params.id)
 
-    if (!comment)
-    return res.status(400).send(`The comment with id "${req.params.id}" does not exist.`);
+    if (!user)
+    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
 
-    comment.dislikes++
+    user.dislikes++
 
-    await comment.save();
-    return res.send(comment);
+    await user.save();
+    return res.send(user);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
@@ -134,13 +135,14 @@ router.put('/:id/dislikes', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
    
-    const comment = await Comment.findByIdAndRemove(req.params.id);
-    if (!comment)
-    return res.status(400).send(`The comment with id "${req.params.id}" does not exist.`);
-    return res.send(comment);
+    const user = await user.findByIdAndRemove(req.params.id);
+    if (!user)
+    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+    return res.send(user);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/ 
 module.exports = router;

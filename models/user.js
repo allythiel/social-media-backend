@@ -4,7 +4,6 @@ const Joi = require('joi');
 ////////////////////////////////////////////////////////////////////////////////////////////////
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: 5, maxlength: 50 }, 
-  
   password: { type: String, required: true, minlength: 5, maxlength: 50 }, 
   email: { type: String, required: true, minlength: 5, maxlength: 50 }, 
   photoURL: { type: String, required: true, minlength: 5, maxlength: 50 },
