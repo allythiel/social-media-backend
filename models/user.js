@@ -1,19 +1,7 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true, minlength: 5, maxlength: 50 }, 
-  password: { type: String, required: true, minlength: 5, maxlength: 50 }, 
-  email: { type: String, required: true, minlength: 5, maxlength: 50 }, 
-  photoURL: { type: String, required: true, minlength: 5, maxlength: 50 },
-  aboutMe: { type: String, required: true, minlength: 5, maxlength: 1000 }, 
-  friends: [], 
-  friendRequestIn: [friendRequestInSchema], 
-  friendRequestOut: [friendRequestOutSchema], 
-  post: [postSchema],
-  dateAdded: { type: Date, default: Date.now },
-});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 const friendRequestInSchema = new mongoose.Schema({
     receiver: { type: String, required: true, minlength: 5, maxlength: 500 },
@@ -33,7 +21,21 @@ const postSchema = new mongoose.Schema({
     author: {type: String, required: true, minlength: 5, maxlength: 50},
     dateAdded: { type: Date, default: Date.now },
   });
+ 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+const userSchema = new mongoose.Schema({
+    name: { type: String, required: true, minlength: 5, maxlength: 50 }, 
+    password: { type: String, required: true, minlength: 5, maxlength: 50 }, 
+    email: { type: String, required: true, minlength: 5, maxlength: 50 }, 
+    photoURL: { type: String, required: true, minlength: 5, maxlength: 50 },
+    aboutMe: { type: String, required: true, minlength: 5, maxlength: 1000 }, 
+    friends: [], 
+    friendRequestIn: [friendRequestInSchema], 
+    friendRequestOut: [friendRequestOutSchema], 
+    post: [postSchema],
+    dateAdded: { type: Date, default: Date.now },
+  });
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 
 const User = mongoose.model('User', userSchema); 
 const FriendRequestIn = mongoose.model("FriendRequestIn", friendRequestInSchema);
