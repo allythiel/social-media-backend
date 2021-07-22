@@ -52,7 +52,7 @@ function validateUser(user){
     
      
     });
-    return schema.validateUser(user);
+    return schema.validate(user);
 } 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 function validatePost(post){
@@ -60,7 +60,7 @@ function validatePost(post){
       post: Joi.string().min(5).max(1000).required(),  
       author: Joi.string().min(5).max(50).required(), 
   });
-  return schema.validatePost(post);
+  return schema.validate(post);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,9 +69,7 @@ module.exports = {
   FriendRequestIn: FriendRequestIn,
   FriendRequestOut: FriendRequestOut,
   Post: Post,
-  
+  validateUser: validateUser,
   validatePost: validatePost 
 } 
 
-exports.validateUser=validateUser;
-// validateUser: validateUser,
