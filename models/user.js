@@ -27,8 +27,8 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true, minlength: 5, maxlength: 50 }, 
     password: { type: String, required: true, minlength: 5, maxlength: 50 }, 
     email: { type: String, required: true, minlength: 5, maxlength: 50 }, 
-    photoURL: { type: String, required: true, minlength: 5, maxlength: 50 },
-    aboutMe: { type: String, required: true, minlength: 5, maxlength: 1000 }, 
+    photoURL: { type: String, minlength: 0, maxlength: 50 },
+    aboutMe: { type: String,  minlength: 5, maxlength: 1000 }, 
     friends: [], 
     friendRequestIn: [friendRequestInSchema], 
     friendRequestOut: [friendRequestOutSchema], 
@@ -47,11 +47,10 @@ const Post = mongoose.model("Post", postSchema);
 function validateUser(user){
     const schema = Joi.object({ 
      name: Joi.string().min(5).max(50).required(), 
-     userName: Joi.string().min(5).max(50).required(),
      password: Joi.string().min(5).max(50).required(),
      email: Joi.string().min(5).max(50).required(), 
-     photoURL: Joi.string().min(5).max(50).required(),
-     aboutMe: Joi.string().min(5).max(1000).required(),
+    
+     
     });
     return schema.validateUser(user);
 } 
@@ -70,7 +69,9 @@ module.exports = {
   FriendRequestIn: FriendRequestIn,
   FriendRequestOut: FriendRequestOut,
   Post: Post,
-
-  validateUser: validateUser,
+  
   validatePost: validatePost 
-}
+} 
+
+exports.validateUser=validateUser;
+// validateUser: validateUser,

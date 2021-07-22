@@ -1,4 +1,4 @@
-const { User, FriendRequestIn, FriendRequestOut, Post, validateUser, validatePos} = require('../models/user');
+const { User, FriendRequestIn, FriendRequestOut, Post, validateUser, validatePost} = require('../models/user');
 const express = require('express');
 const router = express.Router();
 
@@ -12,8 +12,8 @@ router.get('/', async (req, res) => {
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
 }}); 
-/*
-////////////////////////////////////////////////////////// GET By ID //////////////////////////////////////////
+
+////////////////////////////////////////////////////////// GET User By ID //////////////////////////////////////////
 router.get('/:id', async (req, res) => {
     //TODO: refactor to get ALL users by videoId
     try {
@@ -26,78 +26,60 @@ router.get('/:id', async (req, res) => {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 });
-////////////////////////////////////////////////////////// POST //////////////////////////////////////////
+////////////////////////////////////////////////////////// POST new User//////////////////////////////////////////
  router.post('/', async (req, res) => {
     try {
-        const { error } = validate(req.body);  
+        const { error } = (req.body);  // validateUser
         if (error)
         return res.status(400).send(error);
    
     const user = new User({
 
-    text: req.body.text,
-    likes: req.body.likes,
-    dislikes: req.body.dislikes, 
-    videoId: req.body.videoId,
+    name: req.body.name,
+    password: req.body.password,
+    email: req.body.email, 
+  
     });
 
+    await user.save();
+    return res.send(user);
+    } catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+});   
+
+
+//////////////////////////////////////////////////////////////////// PUT for user Profile update////////////////////////
+router.put('/:id', async (req, res) => {
+    try {
+    const { error } = (req.body);                      // validate
+    if (error) return res.status(400).send(error);
+    const user = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+        name: req.body.name,
+        password: req.body.password,
+        email: req.body.email, 
+        photoURL: req.body.photoURL,  
+        aboutMe: req.body.aboutMe,
+        friends: req.body.friends,
+        friendRequestIn: req.body.friendRequestIn, 
+        friendRequestOut: req.body.friendRequestOut,
+        post: req.body.post,
+ 
+
+    },
+    { new: true }
+    );
+    if (!user)
+    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
     await user.save();
     return res.send(user);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 });  
-////////////////////////////////////////////////////////// POST Reply//////////////////////////////////////////
-router.post('/:id/replies', async (req, res) => {
-    try {
-        const { error } = validateReply(req.body);  
-        if (error)
-        return res.status(400).send(error);
-
-    const user = await user.findById(req.params.id)
-   
-    const reply = new Reply({
-
-    text: req.body.text
-
-    });
-
-    user.replies.push(reply)
-
-    await user.save();
-    return res.send(user);
-
-
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-}); 
-
-//TODO: POST a reply to a user
-//////////////////////////////////////////////////////////////////// PUT ////////////////////////////////////////
-router.put('/:id', async (req, res) => {
-    try {
-    const { error } = validate(req.body);
-    if (error) return res.status(400).send(error);
-    const user = await user.findByIdAndUpdate(
-    req.params.id,
-    {
-        text: req.body.text,
-        likes: req.body.likes,
-        dislikes: req.body.dislikes, 
-        videoId: req.body.videoId,
-    },
-    { new: true }
-    );
-    if (!user)
-    return res.status(400).send(`The user with id "${req.params.id}" d
-   oes not exist.`);
-    await user.save();
-    return res.send(user);
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-}); 
+/*
 //////////////////////////////////////////////////////////////////// PUT  Likes ////////////////////////////////////////
 router.put('/:id/likes', async (req, res) => {
     try {
