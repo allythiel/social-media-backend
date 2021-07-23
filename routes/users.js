@@ -105,7 +105,7 @@ router.post('/:id/post', async (req, res) => {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 });    
-////////////////////////////////////////////////////////// POST new friend Request //////////////////////////////////////////
+////////////////////////////////////////////////////////// POST new friend Request IN //////////////////////////////////////////
 router.post('/:id/friendRequestIn', async (req, res) => {
     try {
         const { error } = (req.body);  // validateUser
@@ -131,7 +131,32 @@ router.post('/:id/friendRequestIn', async (req, res) => {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 });    
+////////////////////////////////////////////////////////// POST new friend Request OUT //////////////////////////////////////////
+router.post('/:id/friendRequestOut', async (req, res) => {
+    try {
+        const { error } = (req.body);  // validateUser
+        if (error)
+        return res.status(400).send(error);
 
+        const user = await User.findById(req.params.id)
+
+    const friendRequestOut = new FriendRequestOut({
+
+    sender: req.body.sender,
+    status: req.body.status,
+     
+  
+    });
+
+    user.friendRequestOut.push(friendRequestOut)
+
+    await user.save();
+    return res.send(user);
+
+    } catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+}); 
 ////////////////////////////////////////////////////////// GET all Posts for User//////////////////////////////////////////
 router.get('/:id/post', async (req, res) => {
     //TODO: refactor to get ALL users by videoId
