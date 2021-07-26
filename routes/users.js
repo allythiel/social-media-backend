@@ -169,38 +169,62 @@ router.get('/:id/post', async (req, res) => {
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
-});
-//////////////////////////////////////////////////////////////////// PUT  Likes (still nededs work)////////////////////////////////////////
-router.put('/:id/post/:id/likes', async (req, res) => {
-    
-    
+}); 
+//////////////////////////////////////////////////////////////////// PUT to add a friend (need work)///////////////////////
+router.put('/:id/friends', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id)
-        const post = await Post.findById(req.params.id) 
-
-    if (!post)
-    return res.status(400).send(`The post with id "${req.params.id}" does not exist.`);
-
-    post.likes++
-
-    await post.save();
-    return res.send(user.post);
+    const { error } = (req.body);                      // validate
+    if (error) return res.status(400).send(error);
+    const user = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+        friends: req.body.friends,
+        
+    },
+    { new: true }
+    );
+    if (!user)
+    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+    await user.save();
+    return res.send(user.friends);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 }); 
-//////////////////////////////////////////////////////////////////// DELETE Post (neeeds to be corrected)///////////////////////////////////////
-router.delete('/:userId/post/:postId', async (req, res) => {
+//////////////////////////////////////////////////////////////////// PUT  Likes (works)////////////////////////////////////////
+router.put('/:userId/:postId/likes', async (req, res) => {
+    
+    
     try {
-
-        const user = await User.findById(req.params.id)
-    //const post = await Post.findByIdAndRemove(req.params.id);
-        //const updatedUser = await user.post.filter((data)=> data!==req.params.postId) 
-       //console.log(updatedUser); 
-        console.log(user.post);
+        const user = await User.findById(req.params.userId)
 
     if (!user)
+    return res.status(400).send(`The post with id "${req.params.userId}" does not exist.`);
+
+    //ternary
+    user.post.filter((data) =>         
+        data._id == req.params.postId ? data.likes++ : console.log('post does not exist')
+    );
+  
+    await user.save();
+    return res.send(user);
+    } catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+}); 
+//////////////////////////////////////////////////////////////////// DELETE Post (working)///////////////////////////////////////
+router.put('/:userId/:postId', async (req, res) => {
+    try {
+
+        const user = await User.findById(req.params.userId)
+    
+    if (!user)
     return res.status(400).send(`The post with id "${req.params.id}" does not exist.`);
+
+    //const post = await Post.findByIdAndRemove(req.params.id);
+    const updatedUser = user.post.filter((data)=> data._id!=req.params.postId) 
+    user.post = updatedUser;
+     await user.save();
     return res.send(user);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);

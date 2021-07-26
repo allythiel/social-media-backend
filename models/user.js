@@ -24,7 +24,7 @@ const postSchema = new mongoose.Schema({
  
 ////////////////////////////////////////////////////////////////////////////////////////////////
 const userSchema = new mongoose.Schema({
-    name: { type: String, required: true, minlength: 5, maxlength: 50 }, 
+    name: { type: String, required: true, minlength: 2, maxlength: 50 }, 
     password: { type: String, required: true, minlength: 5, maxlength: 50 }, 
     email: { type: String, required: true, minlength: 5, maxlength: 50 }, 
     photoURL: { type: String, minlength: 0, maxlength: 50 },
@@ -46,7 +46,7 @@ const Post = mongoose.model("Post", postSchema);
 
 function validateUser(user){
     const schema = Joi.object({ 
-     name: Joi.string().min(5).max(50).required(), 
+     name: Joi.string().min(2).max(50).required(), 
      password: Joi.string().min(5).max(50).required(),
      email: Joi.string().min(5).max(50).required(), 
     
