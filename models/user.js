@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     friends: [], 
     friendRequestIn: [friendRequestInSchema], 
     friendRequestOut: [friendRequestOutSchema], 
-    post: [postSchema],
+    posts: [postSchema],
     dateAdded: { type: Date, default: Date.now },
   });
   ////////////////////////////////////////////////////////////////////////////////////////////////

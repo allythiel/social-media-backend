@@ -65,7 +65,7 @@ router.put('/:id', async (req, res) => {
         friends: req.body.friends,
         friendRequestIn: req.body.friendRequestIn, 
         friendRequestOut: req.body.friendRequestOut,
-        post: req.body.post,
+        posts: req.body.posts,
  
 
     },
@@ -96,7 +96,7 @@ router.post('/:id/post', async (req, res) => {
   
     });
 
-    user.post.push(post)
+    user.posts.push(post)
 
     await user.save();
     return res.send(user);
@@ -165,7 +165,7 @@ router.get('/:id/post', async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user)
     return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
-    return res.send(user.post);
+    return res.send(user.posts);
     } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
     }
@@ -202,7 +202,7 @@ router.put('/:userId/:postId/likes', async (req, res) => {
     return res.status(400).send(`The post with id "${req.params.userId}" does not exist.`);
 
     //ternary
-    user.post.filter((data) =>         
+    user.posts.filter((data) =>         
         data._id == req.params.postId ? data.likes++ : console.log('post does not exist')
     );
   
@@ -223,7 +223,7 @@ router.put('/:userId/:postId', async (req, res) => {
 
     //const post = await Post.findByIdAndRemove(req.params.id);
     const updatedUser = user.post.filter((data)=> data._id!=req.params.postId) 
-    user.post = updatedUser;
+    user.posts = updatedUser;
      await user.save();
     return res.send(user);
     } catch (ex) {
