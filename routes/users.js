@@ -64,11 +64,7 @@ router.put('/:id', async (req, res) => {
             email: req.body.email,
             photoURL: req.body.photoURL,
             aboutMe: req.body.aboutMe,
-            friends: req.body.friends,
-            friendRequestIn: req.body.friendRequestIn,
-            friendRequestOut: req.body.friendRequestOut,
-            posts: req.body.posts,
-
+           
 
          },
          { new: true }
@@ -160,7 +156,7 @@ router.post('/:id/friendRequestOut', async (req, res) => {
    }
 });
 ////////////////////////////////////////////////////////// GET all Posts for User//////////////////////////////////////////
-router.get('/:id/post', async (req, res) => {
+router.get('/:id/posts', async (req, res) => {
    //TODO: refactor to get ALL users by videoId
    try {
 
@@ -224,7 +220,7 @@ router.put('/:userId/:postId', async (req, res) => {
          return res.status(400).send(`The post with id "${req.params.postId}" does not exist.`);
 
       //const post = await Post.findByIdAndRemove(req.params.id);
-      const updatedUser = user.post.filter((data) => data._id != req.params.postId)
+      const updatedUser = user.posts.filter((data) => data._id != req.params.postId)
       user.posts = updatedUser;
       await user.save();
       return res.send(user);
