@@ -42,6 +42,7 @@ router.post('/', async (req, res) => {
          password: req.body.password,
          email: req.body.email,
          avatar: '',
+         aboutMe: 'Tell us all about you...',
          friends: [],
       });
 
@@ -64,7 +65,7 @@ router.put('/:id', async (req, res) => {
             name: req.body.name,
             password: req.body.password,
             email: req.body.email,
-            photoURL: req.body.photoURL,
+            avatar: req.body.avatar,
             aboutMe: req.body.aboutMe,
 
 
