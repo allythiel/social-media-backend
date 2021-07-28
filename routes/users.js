@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
       const { error } = (req.body);  // validateUser
       if (error)
          return res.status(400).send(error);
-      
+
       let user = await User.findOne({ email: req.body.email });
       if (user) return res.status(400).send('User already registered.');
 
@@ -41,6 +41,8 @@ router.post('/', async (req, res) => {
          name: req.body.name,
          password: req.body.password,
          email: req.body.email,
+         avatar: '',
+         friends: [],
       });
 
       await user.save();
@@ -64,7 +66,7 @@ router.put('/:id', async (req, res) => {
             email: req.body.email,
             photoURL: req.body.photoURL,
             aboutMe: req.body.aboutMe,
-           
+
 
          },
          { new: true }
