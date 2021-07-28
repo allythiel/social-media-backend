@@ -1,4 +1,4 @@
-const { User, FriendRequestIn, FriendRequestOut, Post, validateUser, validatePost} = require('../models/user');
+const { User, FriendRequestIn, FriendRequestOut, Post, validateUser, validatePost } = require('../models/user');
 const express = require('express');
 const router = express.Router();
 
@@ -6,230 +6,232 @@ const router = express.Router();
 // All endpoints and route handlers go here
 ////////////////////////////////////////////////////////// GET all users//////////////////////////////////////////
 router.get('/', async (req, res) => {
-    try {
-    const users = await User.find();
-    return res.send(users);
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-}}); 
+   try {
+      const users = await User.find();
+      return res.send(users);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 
 ////////////////////////////////////////////////////////// GET User By ID //////////////////////////////////////////
 router.get('/:id', async (req, res) => {
-    //TODO: refactor to get ALL users by videoId
-    try {
-   
-    const user = await User.findById(req.params.id);
-    if (!user)
-    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
-    return res.send(user);
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
+   //TODO: refactor to get ALL users by videoId
+   try {
+
+      const user = await User.findById(req.params.id);
+      if (!user)
+         return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+      return res.send(user);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
 });
 ////////////////////////////////////////////////////////// POST new User//////////////////////////////////////////
- router.post('/', async (req, res) => {
-    try {
-        const { error } = (req.body);  // validateUser
-        if (error)
-        return res.status(400).send(error);
-   
-    const user = new User({
+router.post('/', async (req, res) => {
+   try {
+      const { error } = (req.body);  // validateUser
+      if (error)
+         return res.status(400).send(error);
+      
+      let user = await User.findOne({ email: req.body.email });
+      if (user) return res.status(400).send('User already registered.');
 
-    name: req.body.name,
-    password: req.body.password,
-    email: req.body.email, 
-  
-    });
+      user = new User({
+         name: req.body.name,
+         password: req.body.password,
+         email: req.body.email,
+      });
 
-    await user.save();
-    return res.send(user);
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-});   
+      await user.save();
+      return res.send(user);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 
 
 //////////////////////////////////////////////////////////////////// PUT for user Profile update////////////////////////
 router.put('/:id', async (req, res) => {
-    try {
-    const { error } = (req.body);                      // validate
-    if (error) return res.status(400).send(error);
-    const user = await User.findByIdAndUpdate(
-    req.params.id,
-    {
-        name: req.body.name,
-        password: req.body.password,
-        email: req.body.email, 
-        photoURL: req.body.photoURL,  
-        aboutMe: req.body.aboutMe,
-        friends: req.body.friends,
-        friendRequestIn: req.body.friendRequestIn, 
-        friendRequestOut: req.body.friendRequestOut,
-        posts: req.body.posts,
- 
+   try {
+      const { error } = (req.body);                      // validate
+      if (error) return res.status(400).send(error);
+      const user = await User.findByIdAndUpdate(
+         req.params.id,
+         {
+            name: req.body.name,
+            password: req.body.password,
+            email: req.body.email,
+            photoURL: req.body.photoURL,
+            aboutMe: req.body.aboutMe,
+            friends: req.body.friends,
+            friendRequestIn: req.body.friendRequestIn,
+            friendRequestOut: req.body.friendRequestOut,
+            posts: req.body.posts,
 
-    },
-    { new: true }
-    );
-    if (!user)
-    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
-    await user.save();
-    return res.send(user);
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-});   
+
+         },
+         { new: true }
+      );
+      if (!user)
+         return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+      await user.save();
+      return res.send(user);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 ////////////////////////////////////////////////////////// POST new Post //////////////////////////////////////////
 router.post('/:id/post', async (req, res) => {
-    try {
-        const { error } = (req.body);  // validateUser
-        if (error)
-        return res.status(400).send(error);
+   try {
+      const { error } = (req.body);  // validateUser
+      if (error)
+         return res.status(400).send(error);
 
-        const user = await User.findById(req.params.id)
+      const user = await User.findById(req.params.id)
 
-    const post = new Post({
+      const post = new Post({
 
-    post: req.body.post,
-    author: req.body.author,
-    likes: req.body.likes, 
-  
-    });
+         post: req.body.post,
+         author: req.body.author,
+         likes: req.body.likes,
 
-    user.posts.push(post)
+      });
 
-    await user.save();
-    return res.send(user);
+      user.posts.push(post)
 
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-});    
+      await user.save();
+      return res.send(user);
+
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 ////////////////////////////////////////////////////////// POST new friend Request IN //////////////////////////////////////////
 router.post('/:id/friendRequestIn', async (req, res) => {
-    try {
-        const { error } = (req.body);  // validateUser
-        if (error)
-        return res.status(400).send(error);
+   try {
+      const { error } = (req.body);  // validateUser
+      if (error)
+         return res.status(400).send(error);
 
-        const user = await User.findById(req.params.id)
+      const user = await User.findById(req.params.id)
 
-    const friendRequestIn = new FriendRequestIn({
+      const friendRequestIn = new FriendRequestIn({
 
-    receiver: req.body.receiver,
-    status: req.body.status,
-     
-  
-    });
+         receiver: req.body.receiver,
+         status: req.body.status,
 
-    user.friendRequestIn.push(friendRequestIn)
 
-    await user.save();
-    return res.send(user);
+      });
 
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-});    
+      user.friendRequestIn.push(friendRequestIn)
+
+      await user.save();
+      return res.send(user);
+
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 ////////////////////////////////////////////////////////// POST new friend Request OUT //////////////////////////////////////////
 router.post('/:id/friendRequestOut', async (req, res) => {
-    try {
-        const { error } = (req.body);  // validateUser
-        if (error)
-        return res.status(400).send(error);
+   try {
+      const { error } = (req.body);  // validateUser
+      if (error)
+         return res.status(400).send(error);
 
-        const user = await User.findById(req.params.id)
+      const user = await User.findById(req.params.id)
 
-    const friendRequestOut = new FriendRequestOut({
+      const friendRequestOut = new FriendRequestOut({
 
-    sender: req.body.sender,
-    status: req.body.status,
-     
-  
-    });
+         sender: req.body.sender,
+         status: req.body.status,
 
-    user.friendRequestOut.push(friendRequestOut)
 
-    await user.save();
-    return res.send(user);
+      });
 
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-}); 
+      user.friendRequestOut.push(friendRequestOut)
+
+      await user.save();
+      return res.send(user);
+
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 ////////////////////////////////////////////////////////// GET all Posts for User//////////////////////////////////////////
 router.get('/:id/post', async (req, res) => {
-    //TODO: refactor to get ALL users by videoId
-    try {
-   
-    const user = await User.findById(req.params.id);
-    if (!user)
-    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
-    return res.send(user.posts);
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-}); 
+   //TODO: refactor to get ALL users by videoId
+   try {
+
+      const user = await User.findById(req.params.id);
+      if (!user)
+         return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+      return res.send(user.posts);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 //////////////////////////////////////////////////////////////////// PUT to add a friend (need work)///////////////////////
 router.put('/:id/friends', async (req, res) => {
-    try {
-    const { error } = (req.body);                      // validate
-    if (error) return res.status(400).send(error);
-    const user = await User.findByIdAndUpdate(
-    req.params.id,
-    {
-        friends: req.body.friends,
-        
-    },
-    { new: true }
-    );
-    if (!user)
-    return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
-    await user.save();
-    return res.send(user.friends);
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-}); 
+   try {
+      const { error } = (req.body);                      // validate
+      if (error) return res.status(400).send(error);
+      const user = await User.findByIdAndUpdate(
+         req.params.id,
+         {
+            friends: req.body.friends,
+
+         },
+         { new: true }
+      );
+      if (!user)
+         return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+      await user.save();
+      return res.send(user.friends);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 //////////////////////////////////////////////////////////////////// PUT  Likes (works)////////////////////////////////////////
 router.put('/:userId/:postId/likes', async (req, res) => {
-    
-    
-    try {
-        const user = await User.findById(req.params.userId)
 
-    if (!user)
-    return res.status(400).send(`The post with id "${req.params.userId}" does not exist.`);
 
-    //ternary
-    user.posts.filter((data) =>         
-        data._id == req.params.postId ? data.likes++ : console.log('post does not exist')
-    );
-  
-    await user.save();
-    return res.send(user);
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-}); 
+   try {
+      const user = await User.findById(req.params.userId)
+
+      if (!user)
+         return res.status(400).send(`The post with id "${req.params.userId}" does not exist.`);
+
+      //ternary
+      user.posts.filter((data) =>
+         data._id == req.params.postId ? data.likes++ : console.log('post does not exist')
+      );
+
+      await user.save();
+      return res.send(user);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 //////////////////////////////////////////////////////////////////// DELETE Post (working)///////////////////////////////////////
 router.put('/:userId/:postId', async (req, res) => {
-    try {
+   try {
 
-        const user = await User.findById(req.params.userId)
-    
-    if (!user)
-    return res.status(400).send(`The post with id "${req.params.postId}" does not exist.`);
+      const user = await User.findById(req.params.userId)
 
-    //const post = await Post.findByIdAndRemove(req.params.id);
-    const updatedUser = user.post.filter((data)=> data._id!=req.params.postId) 
-    user.posts = updatedUser;
-     await user.save();
-    return res.send(user);
-    } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-}); 
+      if (!user)
+         return res.status(400).send(`The post with id "${req.params.postId}" does not exist.`);
+
+      //const post = await Post.findByIdAndRemove(req.params.id);
+      const updatedUser = user.post.filter((data) => data._id != req.params.postId)
+      user.posts = updatedUser;
+      await user.save();
+      return res.send(user);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 module.exports = router;
