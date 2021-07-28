@@ -30,9 +30,9 @@ router.get('/:id', async (req, res) => {
 ////////////////////////////////////////////////////////// POST new User//////////////////////////////////////////
 router.post('/', async (req, res) => {
    try {
-      const { error } = (req.body);  // validateUser
-      if (error)
-         return res.status(400).send(error);
+      // const { error } = (req.body);  // validateUser
+      // if (error)
+      //    return res.status(400).send(error);
 
       let user = await User.findOne({ email: req.body.email });
       if (user) return res.status(400).send('User already registered.');
@@ -53,6 +53,22 @@ router.post('/', async (req, res) => {
    }
 });
 
+
+////////////////////////////////////////////////////////// Validate User Login //////////////////////////////////////////
+router.post('/login', async (req, res) => {
+   try {
+      // const { error } = (req.body);  // validateUser
+      // if (error)
+      //    return res.status(400).send(error);
+
+      let user = await User.findOne({ email: req.body.email });
+      if (!user) return res.status(400).send('User does not exist.');
+
+      return res.send(user);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+});
 
 //////////////////////////////////////////////////////////////////// PUT for user Profile update////////////////////////
 router.put('/:id', async (req, res) => {
