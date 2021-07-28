@@ -219,7 +219,7 @@ router.put('/:userId/:postId', async (req, res) => {
         const user = await User.findById(req.params.userId)
     
     if (!user)
-    return res.status(400).send(`The post with id "${req.params.id}" does not exist.`);
+    return res.status(400).send(`The post with id "${req.params.postId}" does not exist.`);
 
     //const post = await Post.findByIdAndRemove(req.params.id);
     const updatedUser = user.post.filter((data)=> data._id!=req.params.postId) 
