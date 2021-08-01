@@ -1,4 +1,4 @@
-const { User, FriendRequestIn, FriendRequestOut, Post, validateUser, validatePost } = require('../models/user');
+const { User, FriendRequestIn, FriendRequestOut, Post, validateUser, validatePost, Friend } = require('../models/user');
 const express = require('express');
 const router = express.Router();
 
@@ -186,13 +186,27 @@ router.get('/:id/posts', async (req, res) => {
    } catch (ex) {
       return res.status(500).send(`Internal Server Error: ${ex}`);
    }
+}); 
+////////////////////////////////////////////////////////// GET all Friends for User//////////////////////////////////////////
+router.get('/:id/friends', async (req, res) => {
+   //TODO: refactor to get ALL users by videoId
+   try {
+
+      const user = await User.findById(req.params.id);
+      if (!user)
+         return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+      return res.send(user.friends);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
 });
 //////////////////////////////////////////////////////////////////// PUT to add a friend (need work)///////////////////////
-router.put('/:id/friends', async (req, res) => {
+/*
+router.post('/:id/friends', async (req, res) => {
    try {
       const { error } = (req.body);                      // validate
       if (error) return res.status(400).send(error);
-      const user = await User.findByIdAndUpdate(
+      const user = await User.findById(
          req.params.id,
          {
             friends: req.body.friends,
@@ -204,6 +218,30 @@ router.put('/:id/friends', async (req, res) => {
          return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
       await user.save();
       return res.send(user.friends);
+   } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+   }
+}); */
+////////////////////////////////////////////////////////// POST to add a friend //////////////////////////////////////////
+router.post('/:id/friends', async (req, res) => {
+   try {
+      const { error } = (req.body);  // validateUser
+      if (error)
+         return res.status(400).send(error);
+
+      const user = await User.findById(req.params.id)
+
+      const friend = new Friend({
+
+         bff: req.body.bff,
+       
+      });
+
+      user.friends.push(friend)
+
+      await user.save();
+      return res.send(user);
+
    } catch (ex) {
       return res.status(500).send(`Internal Server Error: ${ex}`);
    }

@@ -21,7 +21,11 @@ const postSchema = new mongoose.Schema({
     author: {type: String, required: true, minlength: 5, maxlength: 50},
     dateAdded: { type: Date, default: Date.now },
   });
- 
+ ////////////////////////////////////////////////////////////////////////////////////////////////
+const friendSchema = new mongoose.Schema({
+  bff: { type: String, required: true, minlength: 5, maxlength: 100 },
+  dateAdded: { type: Date, default: Date.now },
+});
 ////////////////////////////////////////////////////////////////////////////////////////////////
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true, minlength: 2, maxlength: 50 }, 
@@ -29,19 +33,19 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, minlength: 5, maxlength: 50 }, 
     avatar: { type: String, minlength: 0, maxlength: 50 },
     aboutMe: { type: String,  minlength: 5, maxlength: 1000 }, 
-    friends: [], 
+    friends: [friendSchema], 
     friendRequestIn: [friendRequestInSchema], 
     friendRequestOut: [friendRequestOutSchema], 
     posts: [postSchema],
     dateAdded: { type: Date, default: Date.now },
   });
-  ////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 const User = mongoose.model('User', userSchema); 
 const FriendRequestIn = mongoose.model("FriendRequestIn", friendRequestInSchema);
 const FriendRequestOut = mongoose.model('FriendRequestOut', friendRequestOutSchema); 
 const Post = mongoose.model("Post", postSchema);
-
+const Friend = mongoose.model("Friend", friendSchema);
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 function validateUser(user){
@@ -68,7 +72,8 @@ module.exports = {
   User: User,
   FriendRequestIn: FriendRequestIn,
   FriendRequestOut: FriendRequestOut,
-  Post: Post,
+  Post: Post, 
+  Friend: Friend,
   validateUser: validateUser,
   validatePost: validatePost 
 } 
