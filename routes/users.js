@@ -57,10 +57,7 @@ router.post('/', async (req, res) => {
 ////////////////////////////////////////////////////////// Validate User Login //////////////////////////////////////////
 router.post('/login', async (req, res) => {
    try {
-      // const { error } = (req.body);  // validateUser
-      // if (error)
-      //    return res.status(400).send(error);
-
+   
       let user = await User.findOne({ email: req.body.email });
       if (!user) return res.status(400).send('User does not exist.');
 
