@@ -191,11 +191,18 @@ router.get('/:id/posts', async (req, res) => {
 router.get('/:id/friends', async (req, res) => {
    //TODO: refactor to get ALL users by videoId
    try {
-
-      const user = await User.findById(req.params.id);
+     
+      const user = await User.findById(req.params.id); 
       if (!user)
-         return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
-      return res.send(user.friends);
+         return res.status(400).send(`The user with id "${req.params.id}" does not exist.`); 
+         const UserNew = user.friends.filter((data) =>
+         data.bff !== user._id ? userNew = user.posts : console.log('friend does not exist')
+      );
+
+//await user.save();
+      return res.send(UserNew);  
+      //return res.send(user.friends); 
+      
    } catch (ex) {
       return res.status(500).send(`Internal Server Error: ${ex}`);
    }
